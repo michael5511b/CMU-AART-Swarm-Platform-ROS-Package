@@ -16,39 +16,49 @@ start = time.time()
 rospy.init_node('Central_Algorithm', anonymous=True)
 
 # Get all the node names for all the currently running K4_Send_Cmd nodes (all running Kheperas)
+# Get the node names of all the current running nodes
 node_list = rosnode.get_node_names()
-#print node_list
 
-# Find the topics that contains the "Sensor_Readings_" title
+# Find the nodes that contains the "K4_Send_Cmd_" title
 khep_node_list = [s for s in node_list if "K4_Send_Cmd_" in s]
 ip_num_list = [x[13:16] for x in khep_node_list]
 khep_node_cnt = len(khep_node_list)
 
-#print "Number of sensor reading topics: ", khep_node_cnt
-# print "All sensor readings topics: ", khep_topic_list
-#print khep_node_list
-#print ip_num_list
-
+# Establish all the publishers to each "K4_controls_" topic, corresponding to each K4_Send_Cmd node, which corresponds to each Khepera robot
 pub = []
 for i in range(khep_node_cnt):
 	pub.append(rospy.Publisher('K4_controls_' + str(ip_num_list[i]), K4_controls, queue_size = 10))
 
-
+# This callback function is where the centralized swarm algorithm, or any algorithm should be
+# data is the info subscribed from the vicon node, contains the global position, velocity, etc
+# the algorithm placed inside this callback should be published to the K4_controls topics
+# which should have the K4_controls message type:
+# Angular velocity: ctrl_W
+# Linear velocity: ctrl_V
 def callback(data, args):
+	# i indicates which subsciber this callback function belongs to,
+	# thus it knows which publisher/topic to publish to
 	i = args
+
+	# The message to be published
 	control_msgs = K4_controls()
+	
+	# Algorithms go here
 	control_msgs.ctrl_W = data.transform.translation.x
 	control_msgs.ctrl_V = data.transform.translation.x * 100
+
+	# Publishing
 	#rospy.loginfo(control_msgs)
 	pub[i].publish(control_msgs)
 
 def central():
-	
+	# Set up the Subscribers
 	sub = []
-
 	for i in range(khep_node_cnt):
+		# Automatically subscribes to existing vicon topics corresponding to each khepera
 		sub.append(rospy.Subscriber('vicon/k' + ip_num_list[i] + '/k' + ip_num_list[i], TransformStamped, callback, i ))
 
+	# Spin to loop all callback functions
 	rospy.spin()
 
 
