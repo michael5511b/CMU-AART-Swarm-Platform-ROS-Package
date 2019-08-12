@@ -523,7 +523,7 @@ int main(int argc, char *argv[]) {
     int i = 0;
     long double Rec[100000];
 
-    while(T <= 10.0) {
+    while(T <= 60) {
 		
     	// Get current time stamp
 		

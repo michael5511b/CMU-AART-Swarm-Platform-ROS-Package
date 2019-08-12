@@ -56,7 +56,7 @@ def timer_callback(event):
     global started, last_data
     global W, V
     if (started):
-		rospy.loginfo(last_data)
+		# rospy.loginfo(last_data)
 		# Commands for the Khepera
 		W = last_data.ctrl_W
 		V = last_data.ctrl_V

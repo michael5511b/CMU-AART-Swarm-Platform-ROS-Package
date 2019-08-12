@@ -40,12 +40,25 @@ def callback(data, args):
 	# thus it knows which publisher/topic to publish to
 	i = args
 
+
 	# The message to be published
 	control_msgs = K4_controls()
 	
 	# Algorithms go here
-	control_msgs.ctrl_W = data.transform.translation.x
-	control_msgs.ctrl_V = data.transform.translation.x * 100
+	"""
+	end = time.time()
+	t = end - start
+	control_msgs.ctrl_W = 0
+	control_msgs.ctrl_V = data.transform.translation.x * 100 * math.sin(3.14159 * t)
+	"""
+	kp1 = 150
+	kp2 = 150
+	if i == 0:
+		control_msgs.ctrl_W = 0
+		control_msgs.ctrl_V = - kp1 * (data.transform.translation.x - 1)
+	elif i == 1:
+		control_msgs.ctrl_W = 0
+		control_msgs.ctrl_V = - kp2 * (data.transform.translation.x - 2)
 
 	# Publishing
 	#rospy.loginfo(control_msgs)
@@ -66,4 +79,13 @@ if __name__ == '__main__':
 	try:
 		central()
 	except rospy.ROSInterruptException:
-		pass
+		start = time.time()
+		stop_msg = K4_controls()
+		stop_msg.ctrl_V = 0
+		stop_msg.ctrl_W = 0
+		while(time.time() - start < 2):
+			for i in range(len(pub)):
+				print "stop"
+				pub[i].publish(stop_msg)
+
+		#pass
