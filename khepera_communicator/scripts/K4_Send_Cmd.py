@@ -18,7 +18,7 @@ from khepera_communicator.msg import K4_controls, SensorReadings
 print "========== Khepera IV Communicatoion Driver Node =========="
 
 var = raw_input("Please enter the last three digit of the khepera's IP: ")
-print "you entered: ", var
+print "You entered: ", var
 KHEP_IP_NO = int(var) #UDP Port number of this Khepera robot
 
 
@@ -28,8 +28,17 @@ serverSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 host_name = socket.gethostname()
 # Get the IP address of the local computer using the host name
 host_ip = socket.gethostbyname(host_name)
+
+# Sometimes the host_ip will generate the parent domain IP, which is 127.0.0.1
+# and it will cause errors, if that happens, the node will ask the user to input their local
+# computer's IP manually
+if host_ip == '127.0.0.1':
+	host_ip = raw_input("Please enter the IP address of your local machine: ")
+
 # Bind socket (the port number will be 2000 + last 3 digit of the Khepera IP)
+# Thus we will have a unique port number for each Khepera to send sensor data to, if needed in the future
 serverSock.bind((host_ip, 2000 + int(KHEP_IP_NO)))
+
 
 # Establish the node 
 # (the name of the node will end with the port number, ex: 'K4_Comm_3000' for port 3000)
@@ -45,7 +54,7 @@ addr = ('192.168.1.' + str(KHEP_IP_NO), 2000)
 # Global variables for callbacks 
 last_data = K4_controls()
 started = False
-
+x = 0
 def callback(data):
     global started, last_data
     last_data = data
@@ -55,18 +64,20 @@ def callback(data):
 def timer_callback(event):
     global started, last_data
     global W, V
+    global x
     if (started):
 		rospy.loginfo(last_data)
 		# Commands for the Khepera
 		W = last_data.ctrl_W
 		V = last_data.ctrl_V
+
 		# UDP communication
 		serverSock.sendto(str(W) + 'x' + str(V), addr)
 
 
 def send_cmd():
 	s = rospy.Subscriber('K4_controls_' + var, K4_controls, callback)
-	timer = rospy.Timer(rospy.Duration(0.02), timer_callback) # Set frequency to 50 hz (0.02 sec interval)
+	timer = rospy.Timer(rospy.Duration(0.025), timer_callback) # Set frequency to 50 hz (0.02 sec interval)
 	rospy.spin()
 	timer.shutdown()
 

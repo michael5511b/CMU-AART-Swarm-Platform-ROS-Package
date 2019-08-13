@@ -8,7 +8,7 @@ The ROS package for the swarm platform/system at the Advanced Agent Robotics Tec
 ## Instructions:
 **1.** Make sure ROS is on your computer.
 
-**2.** Download the vicon_bridge package from "https://github.com/ethz-asl/vicon_bridge" to your workspace.
+**2.** Download the vicon_bridge package from "https://github.com/ethz-asl/vicon_bridge" to your workspace. Remember to catkin_make.
 
 **3.** Make sure you have the common messages package in your workspace. If not, download it because we need the geometry_msgs message type.
 

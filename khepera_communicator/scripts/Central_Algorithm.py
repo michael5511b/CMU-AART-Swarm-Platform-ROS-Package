@@ -1,7 +1,6 @@
 #!/usr/bin/env python
-
-#!/usr/bin/env python
 # license removed for brevity
+
 import rospy
 import math
 import time
@@ -45,20 +44,15 @@ def callback(data, args):
 	control_msgs = K4_controls()
 	
 	# Algorithms go here
-	"""
-	end = time.time()
-	t = end - start
-	control_msgs.ctrl_W = 0
-	control_msgs.ctrl_V = data.transform.translation.x * 100 * math.sin(3.14159 * t)
-	"""
-	kp1 = 150
-	kp2 = 150
+	# Simple position feedback control sample
+	kp1 = 200
+	kp2 = 200
 	if i == 0:
 		control_msgs.ctrl_W = 0
-		control_msgs.ctrl_V = - kp1 * (data.transform.translation.x - 1)
+		control_msgs.ctrl_V = - kp1 * (data.transform.translation.x - 2)
 	elif i == 1:
 		control_msgs.ctrl_W = 0
-		control_msgs.ctrl_V = - kp2 * (data.transform.translation.x - 2)
+		control_msgs.ctrl_V = - kp2 * (data.transform.translation.x - 3)
 
 	# Publishing
 	#rospy.loginfo(control_msgs)
@@ -79,13 +73,4 @@ if __name__ == '__main__':
 	try:
 		central()
 	except rospy.ROSInterruptException:
-		start = time.time()
-		stop_msg = K4_controls()
-		stop_msg.ctrl_V = 0
-		stop_msg.ctrl_W = 0
-		while(time.time() - start < 2):
-			for i in range(len(pub)):
-				print "stop"
-				pub[i].publish(stop_msg)
-
-		#pass
+		pass

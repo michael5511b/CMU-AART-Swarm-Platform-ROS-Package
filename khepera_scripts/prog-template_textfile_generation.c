@@ -517,18 +517,30 @@ int main(int argc, char *argv[]) {
     int cnt = 0; // The current grid
     long double delta = 0.01; // The max tolerance of the difference between acceptable time stamp and the grid
 
+    // Time stamp and Velocity command recording
+    FILE *fptr, *fptr2;
+    fptr = fopen("time.txt","w");
+    fptr2 = fopen("V.txt", "w");
+    int i = 0;
+    long double Rec[100000];
+    long double Rec2[100000];
 
-    while(quitReq == 0) {
+    while(T <= 20) {
 				
 
 		// Receive linear and angular velocity commands from the server
 		UDPrecvParseFromServer(UDP_sockfd, servaddr, &W, &V);
 
-		// Get khepera time stamp
-		// gettimeofday(&endt,0x0);
-		// long long t = timeval_diff(NULL, &endt, &startt);
-		// T = t / 1000000.0;
+		// Get time stamp
+		gettimeofday(&endt,0x0);
+		long long t = timeval_diff(NULL, &endt, &startt);
+		T = t / 1000000.0;
 
+		// Storing the time stamp and velocity control in arrays
+		Rec[i] = T; 
+		Rec2[i] = V;
+		i++;
+		
 		// Control the motors
 		Ang_Vel_Control(W, V);
 		
@@ -571,7 +583,16 @@ int main(int argc, char *argv[]) {
 			
 		//usleep(105000); // wait 105 ms, time for gyro to read fresh data
   	}	
-
+  	
+  	// Writing Time stamp and Velocity control data to text files
+  	int j = 0;
+  	for(j = 0; j < i; j++) {
+  		fprintf(fptr,"%Lf\n",Rec[j]);
+  	}
+  	int k = 0;
+  	for(k = 0; k < i; k++) {
+  		fprintf(fptr2 ,"%Lf\n", Rec2[k]);
+  	}
 
   	// Close UDP scoket
   	close(UDP_sockfd);
@@ -589,6 +610,8 @@ int main(int argc, char *argv[]) {
   	// set to regular idle mode!
   	kh4_SetMode(kh4RegIdle, dsPic);
 
+  	fclose(fptr);
+  	fclose(fptr2);
 
 
  	return 0;  
