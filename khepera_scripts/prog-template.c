@@ -78,6 +78,7 @@ int v2p(double v) {
 
 /*---------Angular and linear velocity control of the robot----------*/
 void Ang_Vel_Control(double ang, double vel) {
+	ang = -ang;
 	int PL = (105.4 * ang + 2 * vel) / (2 * 0.678181);
 	int PR = (2 * vel - 105.4 * ang) / (2 * 0.678181);
 	//printf("\nL encoder input: %d", PL);
