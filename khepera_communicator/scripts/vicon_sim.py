@@ -32,6 +32,7 @@ def sim():
 		t = end - start
 		
 		msg1.transform.translation.x = 1 * math.sin(t)
+		msg1.transform.translation.y = 1 * math.sin(3.1415 * t)
 		msg2.transform.translation.x = 2 * math.sin(t)
 		msg3.transform.translation.x = 3 * math.sin(t)
 
