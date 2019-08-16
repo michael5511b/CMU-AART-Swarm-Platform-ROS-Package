@@ -87,24 +87,41 @@ prevY = 0;
 
 H = uicontrol('Style', 'PushButton', ...
                     'String', 'Break', ...
-                    'Callback', 'delete(gcbf)');
+                    'Callback', 'delete(gcbf)','Position',[100, 100, 80 ,40]);
+coor = receive(sub150,10);
 
+xc = coor.Transform.Translation.X;
+yc = coor.Transform.Translation.Y;                
+% khep = viscircles([x y],radius,'Color','b');
+ 
+
+th = 0:pi/50:2*pi;
+X = radius * cos(th) + xc;
+Y = radius * sin(th) + yc;
+h = plot(X, Y, 'Color','b', 'Linewidth', 8);
 while (ishandle(H))
+    delete khep;
     coor = receive(sub150,10);
 
+    xc = coor.Transform.Translation.X;
+    yc = coor.Transform.Translation.Y;
     x = coor.Transform.Translation.X;
     y = coor.Transform.Translation.Y;
     if cnt == 0
-        plot(x,y,'k.', 'MarkerSize', 30);
+        plot(x,y,'k.', 'MarkerSize', 5);
         prevX = x;
         prevY = y;
         cnt = 1;
     else
         plot(x,y,'k.', 'MarkerSize', 30);
-        plot([x prevX], [y prevY],'k', 'Linewidth', 10);
+        plot([x prevX], [y prevY],'k', 'Linewidth', 5);
         prevX = x;
         prevY = y;
+    
     end
+    %khep = viscircles([x y],radius,'Color','b');
+    h.XData = radius * cos(th) + xc;   %Adding a constant in the x data
+    h.YData = radius * sin(th) + yc;
 end
 rosshutdown;
 
