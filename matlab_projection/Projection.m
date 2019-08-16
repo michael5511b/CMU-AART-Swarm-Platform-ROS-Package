@@ -14,7 +14,13 @@ x0 = -76.5*2.54*0.01 ;% -20
 y0 = -39.5*2.54*0.01 ;% -10;
 width = 152.0*2.54*0.01 ;% 40 
 height = 76.7*2.54*0.01 ; % 20 
-initial_center =[randrange(x0,x0+width) randrange(y0,y0+height)];
+
+coor = receive(sub150,10);
+
+xi = coor.Transform.Translation.X;
+yi = coor.Transform.Translation.Y; 
+
+initial_center =[xi yi];
 goal_center    =[randrange(x0,x0+width) randrange(y0,y0+height)];
 radius  =  [0.07];
 viscircles(initial_center,radius,'Color','g')
@@ -92,15 +98,13 @@ coor = receive(sub150,10);
 
 xc = coor.Transform.Translation.X;
 yc = coor.Transform.Translation.Y;                
-% khep = viscircles([x y],radius,'Color','b');
  
-
+r = 0.06;
 th = 0:pi/50:2*pi;
-X = radius * cos(th) + xc;
-Y = radius * sin(th) + yc;
-h = plot(X, Y, 'Color','b', 'Linewidth', 8);
+X = r * cos(th) + xc;
+Y = r * sin(th) + yc;
+h = plot(X, Y, 'Color','b', 'Linewidth', 4);
 while (ishandle(H))
-    delete khep;
     coor = receive(sub150,10);
 
     xc = coor.Transform.Translation.X;
@@ -119,9 +123,8 @@ while (ishandle(H))
         prevY = y;
     
     end
-    %khep = viscircles([x y],radius,'Color','b');
-    h.XData = radius * cos(th) + xc;   %Adding a constant in the x data
-    h.YData = radius * sin(th) + yc;
+    h.XData = r * cos(th) + xc;   %Adding a constant in the x data
+    h.YData = r * sin(th) + yc;
 end
 rosshutdown;
 
