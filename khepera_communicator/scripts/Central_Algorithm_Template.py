@@ -43,6 +43,7 @@ def callback(data, args):
 	# The message to be published
 	control_msgs = K4_controls()
 	
+	#############################################################################
 	# Algorithms go here
 	# Simple position feedback control sample
 	kp1 = 200
@@ -53,6 +54,8 @@ def callback(data, args):
 	elif i == 1:
 		control_msgs.ctrl_W = 0
 		control_msgs.ctrl_V = - kp2 * (data.transform.translation.x - 3)
+
+	##############################################################################
 
 	# Publishing
 	#rospy.loginfo(control_msgs)
