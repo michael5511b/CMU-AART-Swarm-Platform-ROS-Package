@@ -26,14 +26,9 @@ KHEP_IP_NO = int(var) #UDP Port number of this Khepera robot
 serverSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 # Automatically get the standard host name from local computer
 host_name = socket.gethostname()
-# Get the IP address of the local computer using the host name
-host_ip = socket.gethostbyname(host_name)
 
-# Sometimes the host_ip will generate the parent domain IP, which is 127.0.0.1
-# and it will cause errors, if that happens, the node will ask the user to input their local
-# computer's IP manually
-if host_ip == '127.0.0.1':
-	host_ip = raw_input("Please enter the IP address of your local machine: ")
+# Please Change this host ip to the IP address of your own computer
+host_ip = '192.168.1.142'
 
 # Bind socket (the port number will be 2000 + last 3 digit of the Khepera IP)
 # Thus we will have a unique port number for each Khepera to send sensor data to, if needed in the future
@@ -49,7 +44,7 @@ W = 0
 V = 0
 
 # Address and port for the Khepera robot intended to send commands
-addr = ('192.168.1.' + str(KHEP_IP_NO), 2000)
+addr = ('192.168.0.' + str(KHEP_IP_NO), 2000)
 
 # Global variables for callbacks 
 last_data = K4_controls()
